@@ -1,6 +1,7 @@
 {
-  "current_epoch": 0,
-  "tip_height": 0,
-  "tip_hash": "000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f",
-  "_note": "Sample - will be updated with real chain data"
+  "current_epoch": 459,
+  "tip_height": 925831,
+  "tip_hash": "00000000000000000001806d5828307777a176a74aaede1f1599757c2aa2f640",
+  "tip_time": 1764492264,
+  "updated": "2025-11-30T08:54:13.383Z"
 }
