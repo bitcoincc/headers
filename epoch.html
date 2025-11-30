@@ -204,6 +204,10 @@
       return hash.slice(0, 8) + '...' + hash.slice(-8);
     };
 
+    const formatVersion = (version) => {
+      return '0x' + version.toString(16).padStart(8, '0');
+    };
+
     function App() {
       const [epoch, setEpoch] = useState(null);
       const [latest, setLatest] = useState(null);
@@ -307,7 +311,7 @@
                       ${formatHash(h.hash)}
                     </a>
                   </td>
-                  <td class="hide-mobile">${h.version}</td>
+                  <td class="hide-mobile">${formatVersion(h.version)}</td>
                   <td>${formatDate(h.timestamp)}</td>
                   <td class="hide-mobile">${h.bits}</td>
                   <td class="hide-mobile">${h.nonce.toLocaleString()}</td>

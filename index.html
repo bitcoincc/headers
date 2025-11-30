@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>bitcoin.cc - Block Headers</title>
   <meta name="description" content="Bitcoin block headers by epoch. 2016 headers per difficulty period.">
+  <meta property="og:title" content="bitcoin.cc - Block Headers">
+  <meta property="og:description" content="Bitcoin block header infrastructure for SPV. 925k+ headers organized by difficulty epoch.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://bitcoin.cc">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="bitcoin.cc - Block Headers">
+  <meta name="twitter:description" content="Bitcoin block header infrastructure for SPV. Finishing what Section 8 started.">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -235,6 +242,10 @@
             <div class="stat">
               <div class="stat-value">${latest.tip.height.toLocaleString()}</div>
               <div class="stat-label">Block Height</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value">${Math.round(latest.tip.height * 80 / 1024 / 1024)} MB</div>
+              <div class="stat-label">Header Chain</div>
             </div>
           </div>
 
