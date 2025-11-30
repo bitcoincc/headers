@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Epoch - bitcoin.cc</title>
+  <meta name="description" content="Bitcoin block headers for epoch">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, monospace;
+      background: #0d1117;
+      color: #e6edf3;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    header {
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .header-left {}
+    h1 {
+      font-size: 2rem;
+      font-weight: 400;
+      margin-bottom: 0.25rem;
+    }
+    h1 span { color: #f7931a; }
+    .tagline {
+      color: #8b949e;
+    }
+    nav a {
+      color: #8b949e;
+      text-decoration: none;
+      margin-left: 1.5rem;
+    }
+    nav a:hover { color: #e6edf3; }
+    .epoch-header {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .epoch-title {
+      font-size: 1.5rem;
+      color: #f7931a;
+      margin-bottom: 1rem;
+    }
+    .epoch-stats {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    .epoch-stat {
+      color: #8b949e;
+    }
+    .epoch-stat strong {
+      color: #e6edf3;
+    }
+    .nav-epochs {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .nav-epochs a {
+      color: #58a6ff;
+      text-decoration: none;
+    }
+    .nav-epochs a:hover { text-decoration: underline; }
+    .nav-epochs a.disabled {
+      color: #484f58;
+      pointer-events: none;
+    }
+    .headers-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .headers-table th {
+      text-align: left;
+      color: #8b949e;
+      font-weight: 500;
+      padding: 0.75rem;
+      border-bottom: 1px solid #30363d;
+      position: sticky;
+      top: 0;
+      background: #0d1117;
+    }
+    .headers-table td {
+      padding: 0.5rem 0.75rem;
+      border-bottom: 1px solid #21262d;
+      color: #c9d1d9;
+    }
+    .headers-table tr:hover td {
+      background: #161b22;
+    }
+    .hash {
+      font-family: monospace;
+      font-size: 0.75rem;
+      color: #58a6ff;
+    }
+    .hash a {
+      color: #58a6ff;
+      text-decoration: none;
+    }
+    .hash a:hover { text-decoration: underline; }
+    .truncate {
+      max-width: 180px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .loading {
+      color: #8b949e;
+      padding: 2rem;
+      text-align: center;
+    }
+    .download-link {
+      margin-top: 1rem;
+    }
+    .download-link a {
+      color: #58a6ff;
+      text-decoration: none;
+    }
+    .download-link a:hover { text-decoration: underline; }
+    footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #30363d;
+      color: #484f58;
+      font-size: 0.875rem;
+      display: flex;
+      justify-content: space-between;
+    }
+    footer a {
+      color: #8b949e;
+      text-decoration: none;
+    }
+    footer a:hover { color: #e6edf3; }
+    @media (max-width: 768px) {
+      .headers-table { font-size: 0.75rem; }
+      .hash { font-size: 0.65rem; }
+      .truncate { max-width: 100px; }
+      .hide-mobile { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="header-left">
+        <h1>bitcoin<span>.cc</span></h1>
+        <p class="tagline">Block headers by epoch</p>
+      </div>
+      <nav>
+        <a href="/">Explorer</a>
+        <a href="/about.html">About</a>
+      </nav>
+    </header>
+
+    <div id="app">
+      <div class="loading">Loading epoch...</div>
+    </div>
+
+    <footer>
+      <span>2016 headers per epoch</span>
+      <a href="https://github.com/bitcoincc/headers">GitHub</a>
+    </footer>
+  </div>
+
+  <script type="module">
+    import { h, render } from 'https://esm.sh/preact@10.19.3';
+    import { useState, useEffect } from 'https://esm.sh/preact@10.19.3/hooks';
+    import htm from 'https://esm.sh/htm@3.1.1';
+
+    const html = htm.bind(h);
+
+    const getEpochNum = () => {
+      const params = new URLSearchParams(window.location.search);
+      const n = params.get('n');
+      if (n !== null) return parseInt(n);
+      const hash = window.location.hash.slice(1);
+      if (hash) return parseInt(hash);
+      return 0;
+    };
+
+    const formatDate = (timestamp) => {
+      return new Date(timestamp * 1000).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    };
+
+    const formatHash = (hash) => {
+      return hash.slice(0, 8) + '...' + hash.slice(-8);
+    };
+
+    function App() {
+      const [epoch, setEpoch] = useState(null);
+      const [latest, setLatest] = useState(null);
+      const [loading, setLoading] = useState(true);
+      const [error, setError] = useState(null);
+
+      const epochNum = getEpochNum();
+      const isCurrent = latest && epochNum === latest.current_epoch.epoch;
+
+      useEffect(() => {
+        const fetchData = async () => {
+          try {
+            const latestRes = await fetch('/headers/latest.json');
+            const latestData = await latestRes.json();
+            setLatest(latestData);
+
+            const url = epochNum === latestData.current_epoch.epoch
+              ? '/headers/current.json'
+              : `/headers/epoch/${epochNum}.json`;
+
+            const epochRes = await fetch(url);
+            if (!epochRes.ok) throw new Error('Epoch not found');
+            const epochData = await epochRes.json();
+            setEpoch(epochData);
+            document.title = `Epoch ${epochNum} - bitcoin.cc`;
+          } catch (e) {
+            setError(e.message);
+          }
+          setLoading(false);
+        };
+        fetchData();
+      }, [epochNum]);
+
+      if (loading) {
+        return html`<div class="loading">Loading epoch ${epochNum}...</div>`;
+      }
+
+      if (error) {
+        return html`<div class="loading">Error: ${error}</div>`;
+      }
+
+      const maxEpoch = latest.current_epoch.epoch;
+      const prevEpoch = epochNum > 0 ? epochNum - 1 : null;
+      const nextEpoch = epochNum < maxEpoch ? epochNum + 1 : null;
+
+      return html`
+        <div>
+          <div class="nav-epochs">
+            <a href="/">← All Epochs</a>
+            <span style="color: #484f58">|</span>
+            ${prevEpoch !== null
+              ? html`<a href="/epoch.html?n=${prevEpoch}">← Epoch ${prevEpoch}</a>`
+              : html`<span class="disabled">← Previous</span>`
+            }
+            ${nextEpoch !== null
+              ? html`<a href="/epoch.html?n=${nextEpoch}">Epoch ${nextEpoch} →</a>`
+              : html`<span class="disabled">Next →</span>`
+            }
+          </div>
+
+          <div class="epoch-header">
+            <div class="epoch-title">
+              Epoch #${epoch.epoch}
+              ${isCurrent ? html` <span style="color: #f7931a; font-size: 0.8rem;">(current)</span>` : ''}
+            </div>
+            <div class="epoch-stats">
+              <div class="epoch-stat">
+                <strong>${epoch.count.toLocaleString()}</strong> headers
+              </div>
+              <div class="epoch-stat">
+                Blocks <strong>${epoch.start_height.toLocaleString()}</strong> – <strong>${epoch.end_height.toLocaleString()}</strong>
+              </div>
+              <div class="epoch-stat">
+                <strong>${formatDate(epoch.start_time)}</strong> → <strong>${formatDate(epoch.end_time)}</strong>
+              </div>
+            </div>
+            <div class="download-link">
+              <a href="${isCurrent ? '/headers/current.json' : `/headers/epoch/${epochNum}.json`}" download>
+                Download JSON
+              </a>
+            </div>
+          </div>
+
+          <table class="headers-table">
+            <thead>
+              <tr>
+                <th>Height</th>
+                <th>Hash</th>
+                <th class="hide-mobile">Version</th>
+                <th>Time</th>
+                <th class="hide-mobile">Bits</th>
+                <th class="hide-mobile">Nonce</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${epoch.headers.map(h => html`
+                <tr key=${h.height}>
+                  <td>${h.height.toLocaleString()}</td>
+                  <td class="hash truncate">
+                    <a href="https://mempool.space/block/${h.hash}" target="_blank" title=${h.hash}>
+                      ${formatHash(h.hash)}
+                    </a>
+                  </td>
+                  <td class="hide-mobile">${h.version}</td>
+                  <td>${formatDate(h.timestamp)}</td>
+                  <td class="hide-mobile">${h.bits}</td>
+                  <td class="hide-mobile">${h.nonce.toLocaleString()}</td>
+                </tr>
+              `)}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    render(html`<${App} />`, document.getElementById('app'));
+  </script>
+</body>
+</html>

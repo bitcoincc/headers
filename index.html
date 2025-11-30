@@ -80,6 +80,10 @@
     .epoch:hover {
       border-color: #f7931a;
     }
+    a.epoch {
+      text-decoration: none;
+      color: inherit;
+    }
     .epoch-num {
       font-size: 1.25rem;
       color: #f7931a;
@@ -236,7 +240,7 @@
 
           <div class="section-title">Current Epoch</div>
           <div class="epochs">
-            <div class="epoch current">
+            <a href="/epoch.html?n=${currentEpoch.epoch}" class="epoch current">
               <div class="epoch-num">
                 #${currentEpoch.epoch}
                 <div class="badge">${currentEpoch.count}/2016</div>
@@ -246,24 +250,24 @@
               </div>
               <div class="epoch-count">${currentEpoch.count} headers</div>
               <div class="epoch-link">
-                <a href="/headers/current.json">JSON</a>
+                <span>View →</span>
               </div>
-            </div>
+            </a>
           </div>
 
           <div class="section-title">Archived Epochs (${latest.archived_epochs.count})</div>
           <div class="epochs">
             ${archivedEpochs.map(epoch => html`
-              <div class="epoch" key=${epoch}>
+              <a href="/epoch.html?n=${epoch}" class="epoch" key=${epoch}>
                 <div class="epoch-num">#${epoch}</div>
                 <div class="epoch-blocks">
                   Blocks ${(epoch * 2016).toLocaleString()} – ${((epoch + 1) * 2016 - 1).toLocaleString()}
                 </div>
                 <div class="epoch-count">2016 headers</div>
                 <div class="epoch-link">
-                  <a href="/headers/epoch/${epoch}.json">JSON</a>
+                  <span>View →</span>
                 </div>
-              </div>
+              </a>
             `)}
           </div>
         </div>
