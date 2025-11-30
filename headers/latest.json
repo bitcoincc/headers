@@ -1,7 +1,19 @@
 {
-  "current_epoch": 459,
-  "tip_height": 925831,
-  "tip_hash": "00000000000000000001806d5828307777a176a74aaede1f1599757c2aa2f640",
-  "tip_time": 1764492264,
-  "updated": "2025-11-30T08:54:13.383Z"
+  "tip": {
+    "height": 925832,
+    "hash": "0000000000000000000091a2825c36406b687ae8b0a3b0f7d565c58e3c848481",
+    "time": 1764493703
+  },
+  "current_epoch": {
+    "epoch": 459,
+    "start_height": 925344,
+    "count": 489,
+    "complete": false
+  },
+  "archived_epochs": {
+    "count": 459,
+    "last": 458,
+    "blocks": 925343
+  },
+  "updated": "2025-11-30T09:11:41.341Z"
 }

@@ -20,7 +20,11 @@
     }
     header {
       margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
     }
+    .header-left {}
     h1 {
       font-size: 2rem;
       font-weight: 400;
@@ -30,6 +34,12 @@
     .tagline {
       color: #8b949e;
     }
+    nav a {
+      color: #8b949e;
+      text-decoration: none;
+      margin-left: 1.5rem;
+    }
+    nav a:hover { color: #e6edf3; }
     .stats {
       display: flex;
       gap: 2rem;
@@ -94,6 +104,34 @@
       padding: 2rem;
       text-align: center;
     }
+    .section-title {
+      color: #8b949e;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin: 1.5rem 0 0.75rem;
+    }
+    .section-title:first-of-type {
+      margin-top: 0;
+    }
+    .epoch.current {
+      border-color: #f7931a;
+      background: #1c1f24;
+    }
+    .badge {
+      background: #f7931a;
+      color: #0d1117;
+      font-size: 0.65rem;
+      padding: 0.15rem 0.4rem;
+      border-radius: 3px;
+      font-weight: 600;
+      display: inline-block;
+      margin-top: 0.25rem;
+    }
+    .epoch-count {
+      color: #58a6ff;
+      font-size: 0.8rem;
+    }
     footer {
       margin-top: 3rem;
       padding-top: 1.5rem;
@@ -123,8 +161,14 @@
 <body>
   <div class="container">
     <header>
-      <h1>bitcoin<span>.cc</span></h1>
-      <p class="tagline">Block headers by epoch</p>
+      <div class="header-left">
+        <h1>bitcoin<span>.cc</span></h1>
+        <p class="tagline">Block headers by epoch</p>
+      </div>
+      <nav>
+        <a href="/">Explorer</a>
+        <a href="/about.html">About</a>
+      </nav>
     </header>
 
     <div id="app">
@@ -174,29 +218,48 @@
         return html`<div class="loading">No data available yet</div>`;
       }
 
-      const epochs = Array.from({ length: latest.current_epoch + 1 }, (_, i) => i).reverse();
+      const currentEpoch = latest.current_epoch;
+      const archivedEpochs = Array.from({ length: latest.archived_epochs.count }, (_, i) => i).reverse();
 
       return html`
         <div>
           <div class="stats">
             <div class="stat">
-              <div class="stat-value">${latest.current_epoch + 1}</div>
-              <div class="stat-label">Epochs</div>
+              <div class="stat-value">${latest.archived_epochs.count.toLocaleString()}</div>
+              <div class="stat-label">Archived Epochs</div>
             </div>
             <div class="stat">
-              <div class="stat-value">${latest.tip_height.toLocaleString()}</div>
+              <div class="stat-value">${latest.tip.height.toLocaleString()}</div>
               <div class="stat-label">Block Height</div>
             </div>
           </div>
 
+          <div class="section-title">Current Epoch</div>
           <div class="epochs">
-            ${epochs.map(epoch => html`
+            <div class="epoch current">
+              <div class="epoch-num">
+                #${currentEpoch.epoch}
+                <div class="badge">${currentEpoch.count}/2016</div>
+              </div>
+              <div class="epoch-blocks">
+                Blocks ${currentEpoch.start_height.toLocaleString()} – ${latest.tip.height.toLocaleString()}
+              </div>
+              <div class="epoch-count">${currentEpoch.count} headers</div>
+              <div class="epoch-link">
+                <a href="/headers/current.json">JSON</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-title">Archived Epochs (${latest.archived_epochs.count})</div>
+          <div class="epochs">
+            ${archivedEpochs.map(epoch => html`
               <div class="epoch" key=${epoch}>
                 <div class="epoch-num">#${epoch}</div>
                 <div class="epoch-blocks">
                   Blocks ${(epoch * 2016).toLocaleString()} – ${((epoch + 1) * 2016 - 1).toLocaleString()}
                 </div>
-                <div class="epoch-time"></div>
+                <div class="epoch-count">2016 headers</div>
                 <div class="epoch-link">
                   <a href="/headers/epoch/${epoch}.json">JSON</a>
                 </div>

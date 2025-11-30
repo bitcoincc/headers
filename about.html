@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About - bitcoin.cc</title>
+  <meta name="description" content="Bitcoin block header infrastructure for SPV. Finishing what Section 8 started.">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, monospace;
+      background: #0d1117;
+      color: #e6edf3;
+      min-height: 100vh;
+      padding: 2rem;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    header {
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    h1 {
+      font-size: 2rem;
+      font-weight: 400;
+    }
+    h1 span { color: #f7931a; }
+    nav a {
+      color: #8b949e;
+      text-decoration: none;
+      margin-left: 1.5rem;
+    }
+    nav a:hover { color: #e6edf3; }
+    section {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    section h2 {
+      font-size: 1.1rem;
+      color: #f7931a;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    section p {
+      color: #c9d1d9;
+      margin-bottom: 1rem;
+    }
+    section p:last-child { margin-bottom: 0; }
+    blockquote {
+      border-left: 3px solid #f7931a;
+      padding-left: 1rem;
+      margin: 1rem 0;
+      font-style: italic;
+      color: #e6edf3;
+    }
+    blockquote cite {
+      display: block;
+      margin-top: 0.5rem;
+      font-style: normal;
+      color: #8b949e;
+      font-size: 0.9rem;
+    }
+    .highlight {
+      color: #f7931a;
+    }
+    code {
+      background: #0d1117;
+      padding: 0.2rem 0.4rem;
+      border-radius: 3px;
+      font-size: 0.9rem;
+    }
+    .endpoints {
+      margin-top: 1rem;
+    }
+    .endpoint {
+      background: #0d1117;
+      padding: 0.75rem 1rem;
+      border-radius: 4px;
+      margin-bottom: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .endpoint code {
+      color: #58a6ff;
+      background: none;
+      padding: 0;
+    }
+    .endpoint span {
+      color: #8b949e;
+      font-size: 0.875rem;
+    }
+    ul {
+      margin: 1rem 0;
+      padding-left: 1.5rem;
+      color: #c9d1d9;
+    }
+    li { margin-bottom: 0.5rem; }
+    a { color: #58a6ff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #30363d;
+      color: #484f58;
+      font-size: 0.875rem;
+      display: flex;
+      justify-content: space-between;
+    }
+    footer a {
+      color: #8b949e;
+      text-decoration: none;
+    }
+    footer a:hover { color: #e6edf3; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>bitcoin<span>.cc</span></h1>
+      <nav>
+        <a href="/">Explorer</a>
+        <a href="/about.html">About</a>
+      </nav>
+    </header>
+
+    <section>
+      <h2>Mission</h2>
+      <p><span class="highlight">Finishing what Section 8 started.</span></p>
+      <p>The Bitcoin whitepaper described Simplified Payment Verification (SPV) in 2008. Sixteen years later, true SPV infrastructure remains incomplete. Most light wallets today trust servers rather than verify headers themselves.</p>
+      <p>bitcoin.cc provides the foundational infrastructure for real SPV: block headers organized by difficulty epoch, freely accessible, independently verifiable.</p>
+    </section>
+
+    <section>
+      <h2>From the Whitepaper</h2>
+      <blockquote>
+        "It is possible to verify payments without running a full network node. A user only needs to keep a copy of the block headers of the longest proof-of-work chain, which he can get by querying network nodes until he's convinced he has the longest chain, and obtain the Merkle branch linking the transaction to the block it's timestamped in."
+        <cite>— Satoshi Nakamoto, Bitcoin: A Peer-to-Peer Electronic Cash System, Section 8</cite>
+      </blockquote>
+      <p><a href="https://bitcoin.org/bitcoin.pdf" target="_blank">Read the full whitepaper</a></p>
+    </section>
+
+    <section>
+      <h2>Why Headers Matter</h2>
+      <p>A block header is only <span class="highlight">80 bytes</span> — containing the proof-of-work, previous block hash, merkle root, timestamp, and difficulty target. The entire Bitcoin header chain is under 100MB.</p>
+      <p>With headers alone, you can:</p>
+      <ul>
+        <li>Verify proof-of-work without downloading full blocks</li>
+        <li>Identify the longest (most work) chain</li>
+        <li>Validate transaction inclusion via merkle proofs</li>
+        <li>Track difficulty adjustments across epochs</li>
+      </ul>
+      <p>Headers are grouped into <span class="highlight">epochs of 2016 blocks</span> — the Bitcoin difficulty adjustment period. Each epoch represents approximately two weeks of blocks.</p>
+    </section>
+
+    <section>
+      <h2>API</h2>
+      <p>All endpoints return JSON. No authentication required.</p>
+      <div class="endpoints">
+        <div class="endpoint">
+          <code>GET /headers/latest.json</code>
+          <span>Chain tip and epoch summary</span>
+        </div>
+        <div class="endpoint">
+          <code>GET /headers/current.json</code>
+          <span>Current incomplete epoch (updates)</span>
+        </div>
+        <div class="endpoint">
+          <code>GET /headers/epoch/{n}.json</code>
+          <span>Archived epoch (2016 headers, immutable)</span>
+        </div>
+        <div class="endpoint">
+          <code>GET /headers/epoch/0.json</code>
+          <span>Genesis epoch (blocks 0–2015)</span>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Open Source</h2>
+      <p>All header data and code is open source and available on GitHub. Verify independently. Trust, but verify.</p>
+      <p><a href="https://github.com/bitcoincc/headers" target="_blank">github.com/bitcoincc/headers</a></p>
+    </section>
+
+    <footer>
+      <span>bitcoin.cc — compact client infrastructure</span>
+      <a href="https://github.com/bitcoincc/headers">GitHub</a>
+    </footer>
+  </div>
+</body>
+</html>
