@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mirrors - bitcoin.cc</title>
+  <meta name="description" content="Bitcoin block headers distributed across multiple platforms for maximum resilience.">
+  <meta property="og:title" content="Mirrors - bitcoin.cc">
+  <meta property="og:description" content="Bitcoin headers on GitHub, Nostr, IPFS, Arweave, and more. Indestructible infrastructure.">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, monospace;
+      background: #0d1117;
+      color: #e6edf3;
+      min-height: 100vh;
+      padding: 2rem;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    header {
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    h1 {
+      font-size: 2rem;
+      font-weight: 400;
+    }
+    h1 span { color: #f7931a; }
+    nav a {
+      color: #8b949e;
+      text-decoration: none;
+      margin-left: 1.5rem;
+    }
+    nav a:hover { color: #e6edf3; }
+    nav a.active { color: #f7931a; }
+    .intro {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .intro p {
+      color: #c9d1d9;
+      margin-bottom: 1rem;
+    }
+    .intro p:last-child { margin-bottom: 0; }
+    .highlight { color: #f7931a; }
+    h2 {
+      font-size: 1.1rem;
+      color: #f7931a;
+      margin: 2rem 0 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .mirror-grid {
+      display: grid;
+      gap: 1rem;
+    }
+    .mirror {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 1.25rem;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 1rem;
+      align-items: start;
+    }
+    .mirror:hover {
+      border-color: #f7931a;
+    }
+    .mirror-info h3 {
+      font-size: 1rem;
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+    }
+    .mirror-info p {
+      color: #8b949e;
+      font-size: 0.875rem;
+    }
+    .mirror-status {
+      text-align: right;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 3px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+    .status-live {
+      background: #238636;
+      color: #fff;
+    }
+    .status-planned {
+      background: #6e7681;
+      color: #fff;
+    }
+    .status-soon {
+      background: #9e6a03;
+      color: #fff;
+    }
+    .mirror-links {
+      margin-top: 0.75rem;
+    }
+    .mirror-links a {
+      color: #58a6ff;
+      text-decoration: none;
+      font-size: 0.875rem;
+      margin-right: 1rem;
+    }
+    .mirror-links a:hover {
+      text-decoration: underline;
+    }
+    .mirror-links code {
+      background: #0d1117;
+      padding: 0.15rem 0.4rem;
+      border-radius: 3px;
+      font-size: 0.8rem;
+      color: #8b949e;
+    }
+    .philosophy {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 1.5rem;
+      margin-top: 2rem;
+    }
+    .philosophy blockquote {
+      border-left: 3px solid #f7931a;
+      padding-left: 1rem;
+      font-style: italic;
+      color: #c9d1d9;
+    }
+    .cost-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      font-size: 0.875rem;
+    }
+    .cost-table th, .cost-table td {
+      padding: 0.5rem 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid #30363d;
+    }
+    .cost-table th {
+      color: #8b949e;
+      font-weight: 500;
+    }
+    .cost-table td {
+      color: #c9d1d9;
+    }
+    footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #30363d;
+      color: #484f58;
+      font-size: 0.875rem;
+      display: flex;
+      justify-content: space-between;
+    }
+    footer a {
+      color: #8b949e;
+      text-decoration: none;
+    }
+    footer a:hover { color: #e6edf3; }
+    .verify-section {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 1rem;
+      margin-top: 1rem;
+      font-family: monospace;
+      font-size: 0.8rem;
+      color: #8b949e;
+    }
+    .verify-section code {
+      color: #58a6ff;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a href="/" style="text-decoration: none; color: inherit;"><h1>bitcoin<span>.cc</span></h1></a>
+      <nav>
+        <a href="/">Explorer</a>
+        <a href="/realtime.html">Realtime</a>
+        <a href="/mirrors.html" class="active">Mirrors</a>
+        <a href="/about.html">About</a>
+      </nav>
+    </header>
+
+    <div class="intro">
+      <p><span class="highlight">Indestructible infrastructure.</span></p>
+      <p>Bitcoin block headers are distributed across multiple platforms to ensure permanent availability. Each mirror is independently verifiable - headers are authenticated by proof-of-work, not by trust in any single host.</p>
+    </div>
+
+    <h2>Primary</h2>
+    <div class="mirror-grid">
+      <div class="mirror">
+        <div class="mirror-info">
+          <h3>GitHub Pages</h3>
+          <p>Primary CDN. Fast, reliable, globally distributed.</p>
+          <div class="mirror-links">
+            <a href="https://bitcoin.cc/headers/latest.json">bitcoin.cc</a>
+            <a href="https://github.com/bitcoincc/headers">Repository</a>
+          </div>
+        </div>
+        <div class="mirror-status">
+          <span class="status-badge status-live">Live</span>
+        </div>
+      </div>
+    </div>
+
+    <h2>Git Mirrors</h2>
+    <div class="mirror-grid">
+      <div class="mirror">
+        <div class="mirror-info">
+          <h3>GitHub Raw</h3>
+          <p>Direct access to repository files.</p>
+          <div class="mirror-links">
+            <code>raw.githubusercontent.com/bitcoincc/headers/gh-pages/headers/</code>
+          </div>
+        </div>
+        <div class="mirror-status">
+          <span class="status-badge status-live">Live</span>
+        </div>
+      </div>
+
+      <div class="mirror">
+        <div class="mirror-info">
+          <h3>Nostr ngit</h3>
+          <p>Git repository distributed across Nostr relays. Censorship-resistant.</p>
+          <div class="mirror-links">
+            <code>ngit clone nostr://...</code>
+          </div>
+        </div>
+        <div class="mirror-status">
+          <span class="status-badge status-planned">Planned</span>
+        </div>
+      </div>
+    </div>
+
+    <h2>Content-Addressed</h2>
+    <div class="mirror-grid">
+      <div class="mirror">
+        <div class="mirror-info">
+          <h3>IPFS</h3>
+          <p>Content-addressed storage. Fetch from any IPFS gateway.</p>
+          <div class="mirror-links">
+            <code>ipfs://Qm...</code>
+            <a href="#">Gateway</a>
+          </div>
+        </div>
+        <div class="mirror-status">
+          <span class="status-badge status-planned">Planned</span>
+        </div>
+      </div>
+
+      <div class="mirror">
+        <div class="mirror-info">
+          <h3>Nostr Blossom</h3>
+          <p>Blob storage on Nostr. Native to the Nostr ecosystem.</p>
+          <div class="mirror-links">
+            <code>sha256:...</code>
+          </div>
+        </div>
+        <div class="mirror-status">
+          <span class="status-badge status-planned">Planned</span>
+        </div>
+      </div>
+    </div>
+
+    <h2>Permanent Storage</h2>
+    <div class="mirror-grid">
+      <div class="mirror">
+        <div class="mirror-info">
+          <h3>Arweave</h3>
+          <p>Pay once, stored forever. Truly permanent archival.</p>
+          <div class="mirror-links">
+            <code>ar://...</code>
+            <a href="#">arweave.net</a>
+          </div>
+        </div>
+        <div class="mirror-status">
+          <span class="status-badge status-planned">Planned</span>
+        </div>
+      </div>
+
+      <div class="mirror">
+        <div class="mirror-info">
+          <h3>Filecoin</h3>
+          <p>Incentivized IPFS. Storage deals with guaranteed uptime.</p>
+          <div class="mirror-links">
+            <code>filecoin://...</code>
+          </div>
+        </div>
+        <div class="mirror-status">
+          <span class="status-badge status-planned">Planned</span>
+        </div>
+      </div>
+
+      <div class="mirror">
+        <div class="mirror-info">
+          <h3>Internet Archive</h3>
+          <p>The world's library. Historical preservation.</p>
+          <div class="mirror-links">
+            <a href="https://web.archive.org/web/https://bitcoin.cc/headers/latest.json">Wayback Machine</a>
+          </div>
+        </div>
+        <div class="mirror-status">
+          <span class="status-badge status-soon">Soon</span>
+        </div>
+      </div>
+    </div>
+
+    <h2>P2P Distribution</h2>
+    <div class="mirror-grid">
+      <div class="mirror">
+        <div class="mirror-info">
+          <h3>WebTorrent</h3>
+          <p>Browser-native P2P. Users who download become seeders.</p>
+          <div class="mirror-links">
+            <code>magnet:?xt=urn:btih:...</code>
+          </div>
+        </div>
+        <div class="mirror-status">
+          <span class="status-badge status-planned">Planned</span>
+        </div>
+      </div>
+    </div>
+
+    <h2>Live Sources</h2>
+    <div class="mirror-grid">
+      <div class="mirror">
+        <div class="mirror-info">
+          <h3>Electrum Servers</h3>
+          <p>Real-time headers via WebSocket. Subscribe to new blocks as they're mined.</p>
+          <div class="mirror-links">
+            <code>blockchain.block.headers(start, count)</code>
+          </div>
+          <div class="verify-section" style="margin-top: 0.75rem;">
+            <p><code>wss://electrum.blockstream.info:50002</code> (mainnet)</p>
+            <p><code>wss://electrum.blockstream.info:60002</code> (testnet3)</p>
+          </div>
+        </div>
+        <div class="mirror-status">
+          <span class="status-badge status-live">Live</span>
+        </div>
+      </div>
+
+      <div class="mirror">
+        <div class="mirror-info">
+          <h3>Bitcoin Full Nodes</h3>
+          <p>Direct P2P protocol or RPC API. The authoritative source.</p>
+          <div class="mirror-links">
+            <code>getblockheader</code> RPC
+            <code>getheaders</code> P2P
+          </div>
+        </div>
+        <div class="mirror-status">
+          <span class="status-badge status-live">Live</span>
+        </div>
+      </div>
+
+      <div class="mirror">
+        <div class="mirror-info">
+          <h3>Block Explorers</h3>
+          <p>REST APIs from block explorers. Easy integration, widely available.</p>
+          <div class="mirror-links">
+            <a href="https://mempool.space/docs/api/rest">mempool.space</a>
+            <a href="https://blockstream.info/api">blockstream.info</a>
+            <a href="https://www.blockchain.com/api">blockchain.com</a>
+            <a href="https://www.blockcypher.com/dev/bitcoin/">blockcypher</a>
+            <a href="https://blockchair.com/api/docs">blockchair</a>
+          </div>
+        </div>
+        <div class="mirror-status">
+          <span class="status-badge status-live">Live</span>
+        </div>
+      </div>
+    </div>
+
+    <h2>Verification</h2>
+    <div class="intro">
+      <p>Headers are self-verifying via proof-of-work. Any mirror can be validated:</p>
+      <div class="verify-section">
+        <p>1. Each header's hash meets the difficulty target</p>
+        <p>2. Each header references the previous header's hash</p>
+        <p>3. Chain forms continuous proof-of-work from genesis</p>
+        <p>4. Compare against multiple sources</p>
+        <p>5. If any source lies, the math breaks</p>
+      </div>
+      <p style="margin-top: 1rem;">You don't trust mirrors. You verify headers.</p>
+    </div>
+
+    <h2>Cost</h2>
+    <table class="cost-table">
+      <thead>
+        <tr>
+          <th>Platform</th>
+          <th>Cost (459 epochs, ~75MB)</th>
+          <th>Persistence</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>GitHub Pages</td><td>Free</td><td>Until deleted</td></tr>
+        <tr><td>Nostr (ngit + Blossom)</td><td>Free</td><td>While relays up</td></tr>
+        <tr><td>IPFS</td><td>Free (pinning)</td><td>While pinned</td></tr>
+        <tr><td>Filecoin</td><td>~$5</td><td>Paid deals</td></tr>
+        <tr><td>Arweave</td><td>~$20 once</td><td>Forever</td></tr>
+        <tr><td>Internet Archive</td><td>Free</td><td>Forever*</td></tr>
+        <tr><td><strong>Total</strong></td><td><strong>~$25</strong></td><td><strong>Indestructible</strong></td></tr>
+      </tbody>
+    </table>
+
+    <div class="philosophy">
+      <blockquote>
+        "To destroy these headers, you would need to simultaneously take down GitHub,
+        all Nostr relays, the IPFS network, Filecoin miners, Arweave's permanent storage,
+        and the Internet Archive. The data is protected by redundancy, economics, and mathematics."
+      </blockquote>
+    </div>
+
+    <footer>
+      <span>bitcoin.cc - Finishing what Section 8 started</span>
+      <a href="https://github.com/bitcoincc/headers">GitHub</a>
+    </footer>
+  </div>
+</body>
+</html>
