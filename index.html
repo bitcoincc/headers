@@ -41,6 +41,26 @@
     .tagline {
       color: #8b949e;
     }
+    .intro {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.5rem;
+      color: #8b949e;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    .intro strong {
+      color: #e6edf3;
+    }
+    .intro a {
+      color: #58a6ff;
+      text-decoration: none;
+    }
+    .intro a:hover {
+      text-decoration: underline;
+    }
     nav a {
       color: #8b949e;
       text-decoration: none;
@@ -182,6 +202,13 @@
         <a href="/about.html">About</a>
       </nav>
     </header>
+
+    <div class="intro">
+      <strong>Verify Bitcoin without a full node.</strong>
+      Block headers are small (80 bytes) cryptographic proofs that let you confirm transactions
+      without downloading 600GB+ of blockchain data. Browse epochs below or watch
+      <a href="/realtime.html">live headers</a> arrive via Nostr.
+    </div>
 
     <div id="app">
       <div class="loading">Loading epochs...</div>
