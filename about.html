@@ -4,14 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>About - bitcoin.cc</title>
-  <meta name="description" content="Bitcoin block header infrastructure for SPV. Finishing what Section 8 started.">
+  <meta name="description" content="Compact Client infrastructure for Bitcoin. Headers, proofs, and tools for lightweight verification.">
   <meta property="og:title" content="About - bitcoin.cc">
-  <meta property="og:description" content="Finishing what Section 8 started. True SPV infrastructure for Bitcoin.">
+  <meta property="og:description" content="Compact Clients for Bitcoin. Full verification, minimal footprint.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://bitcoin.cc/about.html">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="About - bitcoin.cc">
-  <meta name="twitter:description" content="Finishing what Section 8 started. True SPV infrastructure for Bitcoin.">
+  <meta name="twitter:description" content="Compact Clients for Bitcoin. Full verification, minimal footprint.">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -145,8 +145,20 @@
     <section>
       <h2>Mission</h2>
       <p><span class="highlight">Finishing what Section 8 started.</span></p>
-      <p>The Bitcoin whitepaper described Simplified Payment Verification (SPV) in 2008. Sixteen years later, true SPV infrastructure remains incomplete. Most light wallets today trust servers rather than verify headers themselves.</p>
-      <p>bitcoin.cc provides the foundational infrastructure for real SPV: block headers organized by difficulty epoch, freely accessible, independently verifiable.</p>
+      <p>The Bitcoin whitepaper described Simplified Payment Verification (SPV) in 2008. Seventeen years later, true lightweight verification infrastructure remains incomplete. Most light wallets trust servers rather than verify proofs themselves.</p>
+      <p>bitcoin.cc provides foundational infrastructure for Compact Clients: block headers, merkle proofs, and tools for lightweight Bitcoin verification.</p>
+    </section>
+
+    <section>
+      <h2>What are Compact Clients?</h2>
+      <p><span class="highlight">Compact Clients</span> use cryptographic proofs to verify Bitcoin without requiring full blockchain data. The "compactness" refers to proof size, not capability.</p>
+      <p>Three levels of compact verification:</p>
+      <ul>
+        <li><strong>CC/0 (SPV)</strong> — Headers + merkle proofs. Trusts miners for transaction validity.</li>
+        <li><strong>CC/1 (Verify-don't-serve)</strong> — Full UTXO validation + merkle proofs. Trusts proof servers only for content hashes.</li>
+        <li><strong>CC/2 (ZK-verified)</strong> — Zero-knowledge proofs. Trusts only mathematics. (Future)</li>
+      </ul>
+      <p>bitcoin.cc provides infrastructure for all levels, starting with headers.</p>
     </section>
 
     <section>
