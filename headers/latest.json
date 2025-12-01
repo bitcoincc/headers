@@ -1,13 +1,13 @@
 {
   "tip": {
-    "height": 925833,
-    "hash": "00000000000000000001687886ee8fc140ea4ae875a9f9653d385171a5845567",
-    "time": 1764494232
+    "height": 925988,
+    "hash": "0000000000000000000133f2f3ce5808e00b7d53caf3370eda641a37af369ea6",
+    "time": 1764577487
   },
   "current_epoch": {
     "epoch": 459,
     "start_height": 925344,
-    "count": 490,
+    "count": 645,
     "complete": false
   },
   "archived_epochs": {
@@ -15,5 +15,6 @@
     "last": 458,
     "blocks": 925343
   },
-  "updated": "2025-11-30T09:20:16.031Z"
+  "chain_size": 74079120,
+  "updated": "2025-12-01T08:35:07.338Z"
 }
