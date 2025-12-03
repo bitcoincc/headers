@@ -93,7 +93,6 @@
     .tip-hash {
       font-family: monospace;
       font-size: 0.7rem;
-      color: #58a6ff;
       word-break: break-all;
       margin-top: 0.5rem;
     }
@@ -132,10 +131,11 @@
     .header-hash {
       font-family: monospace;
       font-size: 0.75rem;
-      color: #58a6ff;
       overflow: hidden;
       text-overflow: ellipsis;
     }
+    .hash-zeros { color: #f7931a; }
+    .hash-rest { color: #6e7681; }
     .header-time { color: #8b949e; font-size: 0.75rem; white-space: nowrap; }
     .info {
       margin-top: 1.5rem;
@@ -292,6 +292,14 @@
       return `${Math.floor(seconds / 86400)}d ago`;
     }
 
+    function formatHash(hash) {
+      const match = hash.match(/^(0+)(.*)$/);
+      if (match) {
+        return html`<span class="hash-zeros">${match[1]}</span><span class="hash-rest">${match[2]}</span>`;
+      }
+      return hash;
+    }
+
     function App() {
       const [headers, setHeaders] = useState([]);
       const [relayStatus, setRelayStatus] = useState({});
@@ -390,7 +398,7 @@
           <div class="tip-card">
             <div class="tip-label">Latest Block</div>
             <div class="tip-height">${tip.height.toLocaleString()}</div>
-            <div class="tip-hash">${tip.hash}</div>
+            <div class="tip-hash">${formatHash(tip.hash)}</div>
             <div class="tip-time">${formatTime(tip.timestamp)} (${timeAgo(tip.timestamp)})</div>
           </div>
 
@@ -413,7 +421,7 @@
             ${headers.map(h => html`
               <div class="header-row" key=${h.height}>
                 <div class="header-height">${h.height.toLocaleString()}</div>
-                <div class="header-hash">${h.hash}</div>
+                <div class="header-hash">${formatHash(h.hash)}</div>
                 <div class="header-time">${timeAgo(h.timestamp)}</div>
               </div>
             `)}
