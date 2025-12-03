@@ -32,6 +32,16 @@
     h1 span { color: #f7931a; }
     .header-left {}
     .tagline { color: #8b949e; font-size: 0.9rem; }
+    .intro {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+      color: #c9d1d9;
+      font-size: 0.9rem;
+    }
+    .intro strong { color: #f7931a; }
     nav a {
       color: #8b949e;
       text-decoration: none;
@@ -192,9 +202,17 @@
       <nav>
         <a href="/" class="active">Realtime</a>
         <a href="/explorer.html">Explorer</a>
+        <a href="/mirrors.html">Mirrors</a>
         <a href="/about.html">About</a>
       </nav>
     </header>
+
+    <div class="intro">
+      <strong>Verify Bitcoin without a full node.</strong>
+      Block headers are small (80 bytes) cryptographic proofs that let you confirm transactions
+      without downloading 600GB+ of blockchain data. Watch live headers arrive via Nostr below.
+    </div>
+
     <div id="app"></div>
   </div>
 
