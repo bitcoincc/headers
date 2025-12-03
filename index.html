@@ -98,6 +98,20 @@
       margin-top: 0.5rem;
     }
     .tip-time { color: #8b949e; font-size: 0.85rem; margin-top: 0.5rem; }
+    .energy-bar {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      padding: 0.75rem;
+      margin-bottom: 1.5rem;
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      color: #8b949e;
+    }
+    .energy-stat { display: flex; align-items: center; gap: 0.4rem; }
+    .energy-stat strong { color: #f7931a; }
     .headers-list { display: flex; flex-direction: column; gap: 0.5rem; }
     .header-row {
       display: grid;
@@ -378,6 +392,21 @@
             <div class="tip-height">${tip.height.toLocaleString()}</div>
             <div class="tip-hash">${tip.hash}</div>
             <div class="tip-time">${formatTime(tip.timestamp)} (${timeAgo(tip.timestamp)})</div>
+          </div>
+
+          <div class="energy-bar">
+            <div class="energy-stat">
+              <span>⚡</span>
+              <span><strong>~$${(headers.length * 200).toLocaleString()}k</strong> energy</span>
+            </div>
+            <div class="energy-stat">
+              <span>📦</span>
+              <span><strong>${headers.length}</strong> blocks</span>
+            </div>
+            <div class="energy-stat">
+              <span>💾</span>
+              <span><strong>${(headers.length * 80).toLocaleString()}</strong> bytes</span>
+            </div>
           </div>
 
           <div class="headers-list">
