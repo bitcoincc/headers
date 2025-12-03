@@ -111,6 +111,33 @@
     }
     .energy-stat { display: flex; align-items: center; gap: 0.4rem; }
     .energy-stat strong { color: #f7931a; }
+    .epoch-progress {
+      margin-bottom: 1.5rem;
+      padding: 0.75rem 1rem;
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+    }
+    .epoch-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: #8b949e;
+      margin-bottom: 0.5rem;
+    }
+    .epoch-header strong { color: #f7931a; }
+    .epoch-bar {
+      height: 6px;
+      background: #30363d;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .epoch-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #f7931a 0%, #ffa500 100%);
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
     .headers-list { display: flex; flex-direction: column; gap: 0.5rem; }
     .header-row {
       display: grid;
@@ -414,6 +441,16 @@
             <div class="energy-stat">
               <span>💾</span>
               <span><strong>${(headers.length * 80).toLocaleString()}</strong> bytes</span>
+            </div>
+          </div>
+
+          <div class="epoch-progress">
+            <div class="epoch-header">
+              <span>Epoch <strong>${Math.floor(tip.height / 2016)}</strong></span>
+              <span><strong>${tip.height % 2016}</strong> / 2016 blocks</span>
+            </div>
+            <div class="epoch-bar">
+              <div class="epoch-fill" style="width: ${((tip.height % 2016) / 2016 * 100).toFixed(1)}%"></div>
             </div>
           </div>
 
