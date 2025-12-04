@@ -272,7 +272,7 @@
       'wss://relay.primal.net',
     ];
 
-    const KIND_BITCOIN_HEADERS = 31021;
+    const KIND_BITCOIN_HEADERS = 33333;
     const TRUSTED_PUBKEY = 'cccccccc829b802b7bf52d43edf7cfe62ac89f332a318b6826ac8bd6e73660da';
 
     function parseHeader(hex, index) {
@@ -346,7 +346,7 @@
             setRelayStatus(s => ({ ...s, [url]: 'connected' }));
             const sub = JSON.stringify([
               'REQ', 'headers',
-              { kinds: [KIND_BITCOIN_HEADERS], authors: [TRUSTED_PUBKEY], '#d': ['latest'], '#n': ['mainnet'], limit: 1 }
+              { kinds: [KIND_BITCOIN_HEADERS], authors: [TRUSTED_PUBKEY], '#d': ['latest'], '#n': ['btc'], limit: 1 }
             ]);
             ws.send(sub);
           };
@@ -466,9 +466,9 @@
         `}
 
         <div class="info">
-          <div><strong>Protocol:</strong> <code>kind: 31021</code> <code>d: latest</code> <code>n: mainnet</code> (NIP-XX)</div>
+          <div><strong>Protocol:</strong> <code>kind: 33333</code> <code>d: latest</code> <code>n: btc</code> (<a href="/spec/nip-33333.md" style="color: #58a6ff;">NIP-33333</a>)</div>
           <div style="margin-top: 0.5rem">
-            <strong>Trusted Publisher:</strong> <code style="font-size: 0.65rem">${TRUSTED_PUBKEY}</code>
+            <strong>Trusted Publisher:</strong> <a href="https://nostrcg.github.io/did-nostr/" style="color: #58a6ff; text-decoration: none;"><code style="font-size: 0.65rem">did:nostr:${TRUSTED_PUBKEY.slice(0,8)}...</code></a>
           </div>
           ${eventMeta ? html`
             <div style="margin-top: 0.5rem">
