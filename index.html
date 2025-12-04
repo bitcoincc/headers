@@ -357,8 +357,10 @@
               if (msg[0] === 'EVENT' && msg[2]?.kind === KIND_BITCOIN_HEADERS) {
                 const event = msg[2];
                 const tags = Object.fromEntries(event.tags);
-                const count = parseInt(tags.count, 10);
-                const startHeight = parseInt(tags.start, 10);
+                // NIP-33333: tip tag + content contains headers ending at tip
+                const tipHeight = parseInt(tags.tip, 10);
+                const count = event.content.length / 160; // 80 bytes * 2 hex chars
+                const startHeight = tipHeight - count + 1;
 
                 const parsed = [];
                 for (let i = 0; i < count; i++) {
