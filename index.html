@@ -334,8 +334,8 @@
       const [eventMeta, setEventMeta] = useState(null);
       const [rawEvent, setRawEvent] = useState(null);
       const [showRaw, setShowRaw] = useState(false);
-      const [currentTip, setCurrentTip] = useState(0);
       const socketsRef = useRef({});
+      const currentTipRef = useRef(0);
 
       useEffect(() => {
         RELAYS.forEach(url => {
@@ -363,9 +363,9 @@
                 const count = event.content.length / 160; // 80 bytes * 2 hex chars
                 const startHeight = tipHeight - count + 1;
 
-                // Only update if this event has a higher tip
-                if (tipHeight <= currentTip) {
-                  console.log(`Skipping stale event (tip ${tipHeight} <= ${currentTip})`);
+                // Only update if this event has a higher tip (use ref to avoid stale closure)
+                if (tipHeight <= currentTipRef.current) {
+                  console.log(`Skipping stale event (tip ${tipHeight} <= ${currentTipRef.current})`);
                   return;
                 }
 
@@ -378,7 +378,7 @@
                 }
                 parsed.reverse();
 
-                setCurrentTip(tipHeight);
+                currentTipRef.current = tipHeight;
                 setHeaders(parsed);
                 setLastUpdate(Date.now());
                 setRawEvent(event);
