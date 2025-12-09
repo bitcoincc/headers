@@ -334,6 +334,7 @@
       const [eventMeta, setEventMeta] = useState(null);
       const [rawEvent, setRawEvent] = useState(null);
       const [showRaw, setShowRaw] = useState(false);
+      const [currentTip, setCurrentTip] = useState(0);
       const socketsRef = useRef({});
 
       useEffect(() => {
@@ -362,6 +363,12 @@
                 const count = event.content.length / 160; // 80 bytes * 2 hex chars
                 const startHeight = tipHeight - count + 1;
 
+                // Only update if this event has a higher tip
+                if (tipHeight <= currentTip) {
+                  console.log(`Skipping stale event (tip ${tipHeight} <= ${currentTip})`);
+                  return;
+                }
+
                 const parsed = [];
                 for (let i = 0; i < count; i++) {
                   const header = parseHeader(event.content, i);
@@ -371,6 +378,7 @@
                 }
                 parsed.reverse();
 
+                setCurrentTip(tipHeight);
                 setHeaders(parsed);
                 setLastUpdate(Date.now());
                 setRawEvent(event);
