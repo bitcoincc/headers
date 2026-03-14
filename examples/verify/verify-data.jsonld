@@ -1,0 +1,9 @@
+{
+  "@context": { "schema": "https://schema.org/" },
+  "@id": "#this",
+  "@type": "schema:Action",
+  "schema:name": "Bitcoin Header Chain Verification",
+  "schema:description": "Verify proof-of-work and chain linkage for all Bitcoin block headers.",
+  "schema:actionStatus": { "@id": "https://schema.org/PotentialActionStatus" },
+  "schema:target": "https://pub-a5a92731dd0d452b9670be07e5354fd6.r2.dev/all.bin"
+}
