@@ -2,79 +2,35 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <script>(function(){var t=localStorage.getItem('theme');if(!t&&matchMedia('(prefers-color-scheme:dark)').matches)t='dark';if(t==='dark')document.documentElement.dataset.theme='dark'})()</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mirrors - bitcoin.cc</title>
   <meta name="description" content="Bitcoin block headers distributed across multiple platforms for maximum resilience.">
   <meta property="og:title" content="Mirrors - bitcoin.cc">
   <meta property="og:description" content="Bitcoin headers on GitHub, Nostr, IPFS, Arweave, and more. Indestructible infrastructure.">
+  <link rel="stylesheet" href="/theme.css">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, monospace;
-      background: #0d1117;
-      color: #e6edf3;
-      min-height: 100vh;
-      padding: 2rem;
-      line-height: 1.6;
-    }
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-    }
-    header {
-      margin-bottom: 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    h1 {
-      font-size: 2rem;
-      font-weight: 400;
-    }
-    h1 span { color: #f7931a; }
-    nav a {
-      color: #8b949e;
-      text-decoration: none;
-      margin-left: 1.5rem;
-    }
-    nav a:hover { color: #e6edf3; }
-    nav a.active { color: #f7931a; }
-    .intro {
-      background: #161b22;
-      border: 1px solid #30363d;
-      border-radius: 6px;
-      padding: 1.5rem;
-      margin-bottom: 2rem;
-    }
-    .intro p {
-      color: #c9d1d9;
-      margin-bottom: 1rem;
-    }
-    .intro p:last-child { margin-bottom: 0; }
-    .highlight { color: #f7931a; }
+    .container { max-width: 800px; }
     h2 {
-      font-size: 1.1rem;
-      color: #f7931a;
+      font-size: 1.2rem;
+      color: var(--accent);
       margin: 2rem 0 1rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      font-weight: 600;
     }
     .mirror-grid {
       display: grid;
-      gap: 1rem;
+      gap: 0;
     }
     .mirror {
-      background: #161b22;
-      border: 1px solid #30363d;
-      border-radius: 6px;
-      padding: 1.25rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--border-subtle);
       display: grid;
       grid-template-columns: 1fr auto;
       gap: 1rem;
       align-items: start;
     }
-    .mirror:hover {
-      border-color: #f7931a;
+    .mirror:first-child {
+      border-top: 1px solid var(--border-subtle);
     }
     .mirror-info h3 {
       font-size: 1rem;
@@ -82,7 +38,7 @@
       margin-bottom: 0.25rem;
     }
     .mirror-info p {
-      color: #8b949e;
+      color: var(--text-dim);
       font-size: 0.875rem;
     }
     .mirror-status {
@@ -96,48 +52,37 @@
       font-weight: 500;
     }
     .status-live {
-      background: #238636;
+      background: var(--success);
       color: #fff;
     }
     .status-planned {
-      background: #6e7681;
+      background: var(--text-dim);
       color: #fff;
     }
     .status-soon {
-      background: #9e6a03;
+      background: var(--warning);
       color: #fff;
     }
     .mirror-links {
       margin-top: 0.75rem;
     }
     .mirror-links a {
-      color: #58a6ff;
-      text-decoration: none;
       font-size: 0.875rem;
       margin-right: 1rem;
     }
-    .mirror-links a:hover {
-      text-decoration: underline;
-    }
     .mirror-links code {
-      background: #0d1117;
-      padding: 0.15rem 0.4rem;
-      border-radius: 3px;
       font-size: 0.8rem;
-      color: #8b949e;
     }
     .philosophy {
-      background: #161b22;
-      border: 1px solid #30363d;
-      border-radius: 6px;
-      padding: 1.5rem;
+      padding: 1.5rem 0;
       margin-top: 2rem;
+      border-top: 1px solid var(--border);
     }
     .philosophy blockquote {
-      border-left: 3px solid #f7931a;
+      border-left: 3px solid var(--accent);
       padding-left: 1rem;
       font-style: italic;
-      color: #c9d1d9;
+      color: var(--text-secondary);
     }
     .cost-table {
       width: 100%;
@@ -148,53 +93,40 @@
     .cost-table th, .cost-table td {
       padding: 0.5rem 0.75rem;
       text-align: left;
-      border-bottom: 1px solid #30363d;
+      border-bottom: 1px solid var(--border-subtle);
     }
     .cost-table th {
-      color: #8b949e;
+      color: var(--text-dim);
       font-weight: 500;
+      border-bottom-color: var(--border);
     }
     .cost-table td {
-      color: #c9d1d9;
+      color: var(--text-secondary);
     }
-    footer {
-      margin-top: 3rem;
-      padding-top: 1.5rem;
-      border-top: 1px solid #30363d;
-      color: #484f58;
-      font-size: 0.875rem;
-      display: flex;
-      justify-content: space-between;
-    }
-    footer a {
-      color: #8b949e;
-      text-decoration: none;
-    }
-    footer a:hover { color: #e6edf3; }
     .verify-section {
-      background: #0d1117;
-      border: 1px solid #30363d;
-      border-radius: 6px;
+      background: var(--bg-code);
+      border-radius: var(--radius);
       padding: 1rem;
       margin-top: 1rem;
-      font-family: monospace;
+      font-family: var(--font-mono);
       font-size: 0.8rem;
-      color: #8b949e;
+      color: var(--text-dim);
     }
     .verify-section code {
-      color: #58a6ff;
+      color: var(--link);
     }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <a href="/" style="text-decoration: none; color: inherit;"><h1>bitcoin<span>.cc</span></h1></a>
+      <a href="/"><h1>bitcoin<span>.cc</span></h1></a>
       <nav>
         <a href="/">Realtime</a>
         <a href="/explorer.html">Explorer</a>
         <a href="/mirrors.html" class="active">Mirrors</a>
         <a href="/about.html">About</a>
+        <button class="theme-toggle" onclick="document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'light':'dark';localStorage.setItem('theme',document.documentElement.dataset.theme)" aria-label="Toggle theme"><span class="theme-dark">&#9789;</span><span class="theme-light">&#9788;</span></button>
       </nav>
     </header>
 

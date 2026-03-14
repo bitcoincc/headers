@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <script>(function(){var t=localStorage.getItem('theme');if(!t&&matchMedia('(prefers-color-scheme:dark)').matches)t='dark';if(t==='dark')document.documentElement.dataset.theme='dark'})()</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>bitcoin.cc - Compact Clients</title>
   <meta name="description" content="Compact Client infrastructure for Bitcoin. Headers, proofs, and lightweight verification.">
@@ -12,61 +13,8 @@
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="bitcoin.cc - Compact Clients">
   <meta name="twitter:description" content="Compact Clients for Bitcoin. Full verification, minimal footprint.">
+  <link rel="stylesheet" href="/theme.css">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, monospace;
-      background: #0d1117;
-      color: #e6edf3;
-      min-height: 100vh;
-      padding: 2rem;
-    }
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-    }
-    header {
-      margin-bottom: 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-    }
-    .header-left {}
-    h1 {
-      font-size: 2rem;
-      font-weight: 400;
-      margin-bottom: 0.25rem;
-    }
-    h1 span { color: #f7931a; }
-    .tagline {
-      color: #8b949e;
-    }
-    .intro {
-      background: #161b22;
-      border: 1px solid #30363d;
-      border-radius: 6px;
-      padding: 1.25rem 1.5rem;
-      margin-bottom: 1.5rem;
-      color: #8b949e;
-      font-size: 0.95rem;
-      line-height: 1.5;
-    }
-    .intro strong {
-      color: #e6edf3;
-    }
-    .intro a {
-      color: #58a6ff;
-      text-decoration: none;
-    }
-    .intro a:hover {
-      text-decoration: underline;
-    }
-    nav a {
-      color: #8b949e;
-      text-decoration: none;
-      margin-left: 1.5rem;
-    }
-    nav a:hover { color: #e6edf3; }
     .stats {
       display: flex;
       gap: 2rem;
@@ -74,38 +22,36 @@
       flex-wrap: wrap;
     }
     .stat {
-      background: #161b22;
-      border: 1px solid #30363d;
-      border-radius: 6px;
-      padding: 1rem 1.5rem;
+      padding: 0.75rem 0;
     }
     .stat-value {
       font-size: 1.5rem;
-      color: #f7931a;
+      color: var(--accent);
       font-weight: 500;
     }
     .stat-label {
-      color: #8b949e;
+      color: var(--text-dim);
       font-size: 0.875rem;
     }
     .epochs {
       display: grid;
-      gap: 0.5rem;
+      gap: 0;
     }
     .epoch {
-      background: #161b22;
-      border: 1px solid #30363d;
-      border-radius: 6px;
-      padding: 1rem 1.25rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--border-subtle);
       display: grid;
       grid-template-columns: 80px 1fr 1fr 120px;
       align-items: center;
       gap: 1rem;
       cursor: pointer;
-      transition: border-color 0.15s;
+      transition: color 0.15s;
     }
     .epoch:hover {
-      border-color: #f7931a;
+      color: var(--accent);
+    }
+    .epoch:first-child {
+      border-top: 1px solid var(--border-subtle);
     }
     a.epoch {
       text-decoration: none;
@@ -113,30 +59,21 @@
     }
     .epoch-num {
       font-size: 1.25rem;
-      color: #f7931a;
+      color: var(--accent);
     }
     .epoch-blocks, .epoch-time {
-      color: #8b949e;
+      color: var(--text-dim);
       font-size: 0.875rem;
     }
     .epoch-link {
       text-align: right;
     }
-    .epoch-link a {
-      color: #58a6ff;
-      text-decoration: none;
+    .epoch-link span {
+      color: var(--link);
       font-size: 0.875rem;
     }
-    .epoch-link a:hover {
-      text-decoration: underline;
-    }
-    .loading {
-      color: #8b949e;
-      padding: 2rem;
-      text-align: center;
-    }
     .section-title {
-      color: #8b949e;
+      color: var(--text-dim);
       font-size: 0.75rem;
       text-transform: uppercase;
       letter-spacing: 0.1em;
@@ -146,12 +83,14 @@
       margin-top: 0;
     }
     .epoch.current {
-      border-color: #f7931a;
-      background: #1c1f24;
+      background: var(--accent-subtle);
+      border-color: var(--accent-border);
+      padding: 0.75rem;
+      border-radius: var(--radius);
     }
     .badge {
-      background: #f7931a;
-      color: #0d1117;
+      background: var(--accent);
+      color: var(--badge-text);
       font-size: 0.65rem;
       padding: 0.15rem 0.4rem;
       border-radius: 3px;
@@ -160,24 +99,8 @@
       margin-top: 0.25rem;
     }
     .epoch-count {
-      color: #58a6ff;
+      color: var(--link);
       font-size: 0.8rem;
-    }
-    footer {
-      margin-top: 3rem;
-      padding-top: 1.5rem;
-      border-top: 1px solid #30363d;
-      color: #484f58;
-      font-size: 0.875rem;
-      display: flex;
-      justify-content: space-between;
-    }
-    footer a {
-      color: #8b949e;
-      text-decoration: none;
-    }
-    footer a:hover {
-      color: #e6edf3;
     }
     @media (max-width: 600px) {
       .epoch {
@@ -193,7 +116,7 @@
   <div class="container">
     <header>
       <div class="header-left">
-        <a href="/" style="text-decoration: none; color: inherit;"><h1>bitcoin<span>.cc</span></h1></a>
+        <a href="/"><h1>bitcoin<span>.cc</span></h1></a>
         <p class="tagline">Compact Clients for Bitcoin</p>
       </div>
       <nav>
@@ -201,6 +124,7 @@
         <a href="/explorer.html" class="active">Explorer</a>
         <a href="/mirrors.html">Mirrors</a>
         <a href="/about.html">About</a>
+        <button class="theme-toggle" onclick="document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'light':'dark';localStorage.setItem('theme',document.documentElement.dataset.theme)" aria-label="Toggle theme"><span class="theme-dark">&#9789;</span><span class="theme-light">&#9788;</span></button>
       </nav>
     </header>
 
@@ -290,7 +214,7 @@
               </div>
               <div class="epoch-count">${currentEpoch.count} headers</div>
               <div class="epoch-link">
-                <span>View →</span>
+                <span>View &#8594;</span>
               </div>
             </a>
           </div>
@@ -305,7 +229,7 @@
                 </div>
                 <div class="epoch-count">2016 headers</div>
                 <div class="epoch-link">
-                  <span>View →</span>
+                  <span>View &#8594;</span>
                 </div>
               </a>
             `)}

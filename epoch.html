@@ -2,54 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <script>(function(){var t=localStorage.getItem('theme');if(!t&&matchMedia('(prefers-color-scheme:dark)').matches)t='dark';if(t==='dark')document.documentElement.dataset.theme='dark'})()</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Epoch - bitcoin.cc</title>
   <meta name="description" content="Bitcoin block headers by epoch - Compact Client infrastructure">
+  <link rel="stylesheet" href="/theme.css">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, monospace;
-      background: #0d1117;
-      color: #e6edf3;
-      min-height: 100vh;
-      padding: 2rem;
-    }
-    .container {
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-    header {
-      margin-bottom: 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-    }
-    .header-left {}
-    h1 {
-      font-size: 2rem;
-      font-weight: 400;
-      margin-bottom: 0.25rem;
-    }
-    h1 span { color: #f7931a; }
-    .tagline {
-      color: #8b949e;
-    }
-    nav a {
-      color: #8b949e;
-      text-decoration: none;
-      margin-left: 1.5rem;
-    }
-    nav a:hover { color: #e6edf3; }
+    .container { max-width: 1100px; }
     .epoch-header {
-      background: #161b22;
-      border: 1px solid #30363d;
-      border-radius: 6px;
-      padding: 1.5rem;
+      padding-bottom: 1.5rem;
       margin-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
     }
     .epoch-title {
       font-size: 1.5rem;
-      color: #f7931a;
+      color: var(--accent);
       margin-bottom: 1rem;
     }
     .epoch-stats {
@@ -58,57 +25,50 @@
       flex-wrap: wrap;
     }
     .epoch-stat {
-      color: #8b949e;
+      color: var(--text-dim);
     }
     .epoch-stat strong {
-      color: #e6edf3;
+      color: var(--text);
     }
     .nav-epochs {
       display: flex;
       gap: 1rem;
       margin-bottom: 1rem;
-    }
-    .nav-epochs a {
-      color: #58a6ff;
-      text-decoration: none;
+      font-size: 0.9rem;
     }
     .nav-epochs a:hover { text-decoration: underline; }
-    .nav-epochs a.disabled {
-      color: #484f58;
-      pointer-events: none;
+    .nav-epochs .disabled {
+      color: var(--text-faint);
     }
     .headers-table {
       width: 100%;
       border-collapse: collapse;
       font-size: 0.85rem;
+      font-family: var(--font-mono);
     }
     .headers-table th {
       text-align: left;
-      color: #8b949e;
+      color: var(--text-dim);
       font-weight: 500;
       padding: 0.75rem;
-      border-bottom: 1px solid #30363d;
+      border-bottom: 2px solid var(--border);
       position: sticky;
       top: 0;
-      background: #0d1117;
+      background: var(--bg);
+      font-family: var(--font);
     }
     .headers-table td {
-      padding: 0.5rem 0.75rem;
-      border-bottom: 1px solid #21262d;
-      color: #c9d1d9;
+      padding: 0.4rem 0.75rem;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
     }
     .headers-table tr:hover td {
-      background: #161b22;
+      background: var(--bg-card);
     }
     .hash {
-      font-family: monospace;
       font-size: 0.75rem;
-      color: #58a6ff;
     }
-    .hash a {
-      color: #58a6ff;
-      text-decoration: none;
-    }
+    .hash a { color: var(--link); text-decoration: none; }
     .hash a:hover { text-decoration: underline; }
     .truncate {
       max-width: 180px;
@@ -116,33 +76,9 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-    .loading {
-      color: #8b949e;
-      padding: 2rem;
-      text-align: center;
-    }
     .download-link {
       margin-top: 1rem;
     }
-    .download-link a {
-      color: #58a6ff;
-      text-decoration: none;
-    }
-    .download-link a:hover { text-decoration: underline; }
-    footer {
-      margin-top: 3rem;
-      padding-top: 1.5rem;
-      border-top: 1px solid #30363d;
-      color: #484f58;
-      font-size: 0.875rem;
-      display: flex;
-      justify-content: space-between;
-    }
-    footer a {
-      color: #8b949e;
-      text-decoration: none;
-    }
-    footer a:hover { color: #e6edf3; }
     @media (max-width: 768px) {
       .headers-table { font-size: 0.75rem; }
       .hash { font-size: 0.65rem; }
@@ -155,7 +91,7 @@
   <div class="container">
     <header>
       <div class="header-left">
-        <a href="/" style="text-decoration: none; color: inherit;"><h1>bitcoin<span>.cc</span></h1></a>
+        <a href="/"><h1>bitcoin<span>.cc</span></h1></a>
         <p class="tagline">Compact Clients for Bitcoin</p>
       </div>
       <nav>
@@ -163,6 +99,7 @@
         <a href="/explorer.html">Explorer</a>
         <a href="/mirrors.html">Mirrors</a>
         <a href="/about.html">About</a>
+        <button class="theme-toggle" onclick="document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'light':'dark';localStorage.setItem('theme',document.documentElement.dataset.theme)" aria-label="Toggle theme"><span class="theme-dark">&#9789;</span><span class="theme-light">&#9788;</span></button>
       </nav>
     </header>
 
@@ -258,22 +195,22 @@
       return html`
         <div>
           <div class="nav-epochs">
-            <a href="/">← All Epochs</a>
-            <span style="color: #484f58">|</span>
+            <a href="/">&#8592; All Epochs</a>
+            <span style="color: var(--text-faint)">|</span>
             ${prevEpoch !== null
-              ? html`<a href="/epoch.html?n=${prevEpoch}">← Epoch ${prevEpoch}</a>`
-              : html`<span class="disabled">← Previous</span>`
+              ? html`<a href="/epoch.html?n=${prevEpoch}">&#8592; Epoch ${prevEpoch}</a>`
+              : html`<span class="disabled">&#8592; Previous</span>`
             }
             ${nextEpoch !== null
-              ? html`<a href="/epoch.html?n=${nextEpoch}">Epoch ${nextEpoch} →</a>`
-              : html`<span class="disabled">Next →</span>`
+              ? html`<a href="/epoch.html?n=${nextEpoch}">Epoch ${nextEpoch} &#8594;</a>`
+              : html`<span class="disabled">Next &#8594;</span>`
             }
           </div>
 
           <div class="epoch-header">
             <div class="epoch-title">
               Epoch #${epoch.epoch}
-              ${isCurrent ? html` <span style="color: #f7931a; font-size: 0.8rem;">(current)</span>` : ''}
+              ${isCurrent ? html` <span style="color: var(--accent); font-size: 0.8rem;">(current)</span>` : ''}
             </div>
             <div class="epoch-stats">
               <div class="epoch-stat">
@@ -283,7 +220,7 @@
                 Blocks <strong>${epoch.start_height.toLocaleString()}</strong> – <strong>${epoch.end_height.toLocaleString()}</strong>
               </div>
               <div class="epoch-stat">
-                <strong>${formatDate(epoch.start_time)}</strong> → <strong>${formatDate(epoch.end_time)}</strong>
+                <strong>${formatDate(epoch.start_time)}</strong> &#8594; <strong>${formatDate(epoch.end_time)}</strong>
               </div>
             </div>
             <div class="download-link">
