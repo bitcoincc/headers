@@ -25,14 +25,21 @@ const R2_ACCOUNT_ID = process.env.R2_ACCOUNT_ID
 const R2_ACCESS_KEY = process.env.R2_ACCESS_KEY
 const R2_SECRET_KEY = process.env.R2_SECRET_KEY
 const R2_BUCKET = process.env.R2_BUCKET || 'bitcoin-headers'
+const R2_CHAIN = process.env.R2_CHAIN || 'btc'
 const R2_ENDPOINT = `https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`
 
-const ELECTRUM_SERVERS = [
-  { host: 'electrum.blockstream.info', port: 50002 },
-  { host: 'electrum.jochen-hoenicke.de', port: 50006 },
-  { host: 'e-x.not.fyi', port: 50002 },
-  { host: 'btc.lastingcoin.net', port: 50002 },
-]
+const ELECTRUM_CONFIGS = {
+  btc: [
+    { host: 'electrum.blockstream.info', port: 50002 },
+    { host: 'electrum.jochen-hoenicke.de', port: 50006 },
+    { host: 'e-x.not.fyi', port: 50002 },
+    { host: 'btc.lastingcoin.net', port: 50002 },
+  ],
+  tbtc4: [
+    { host: 'mempool.space', port: 40002 },
+  ],
+}
+const ELECTRUM_SERVERS = ELECTRUM_CONFIGS[R2_CHAIN] || ELECTRUM_CONFIGS.btc
 
 const HEADER_SIZE = 80
 const EPOCH_SIZE = 2016
@@ -328,7 +335,7 @@ class R2Daemon {
     console.log('\n📦 Checking R2 state...')
 
     // Download all.bin to know current state
-    const allBin = await r2Get('all.bin')
+    const allBin = await r2Get(R2_CHAIN + '/all.bin')
     let r2Height = -1
     if (allBin) {
       r2Height = Math.floor(allBin.length / HEADER_SIZE) - 1
@@ -413,7 +420,7 @@ class R2Daemon {
     let uploaded = 0
     for (let e = lastR2Epoch + 1; e <= lastCompleteEpoch; e++) {
       // Check if already exists
-      const existing = await r2Head(`epoch/${e}.bin`)
+      const existing = await r2Head(`${R2_CHAIN}/epoch/${e}.bin`)
       if (existing && existing.size === EPOCH_SIZE * HEADER_SIZE) continue
 
       const start = e * EPOCH_SIZE * HEADER_SIZE
@@ -421,7 +428,7 @@ class R2Daemon {
       const epochData = this.localHeaders.slice(start, end)
 
       process.stdout.write(`  Uploading epoch/${e}.bin...`)
-      await r2Put(`epoch/${e}.bin`, epochData)
+      await r2Put(`${R2_CHAIN}/epoch/${e}.bin`, epochData)
       console.log(' done')
       uploaded++
     }
@@ -443,14 +450,14 @@ class R2Daemon {
     const currentData = this.localHeaders.slice(start, end)
 
     console.log(`  Uploading current.bin (epoch ${currentEpoch}: ${count} headers)...`)
-    await r2Put('current.bin', currentData)
+    await r2Put(R2_CHAIN + '/current.bin', currentData)
     console.log('  Done')
   }
 
   // Upload all.bin
   async uploadAll() {
     console.log(`  Uploading all.bin (${((this.localHeight + 1) * HEADER_SIZE / 1024 / 1024).toFixed(1)} MB)...`)
-    await r2Put('all.bin', this.localHeaders.slice(0, (this.localHeight + 1) * HEADER_SIZE))
+    await r2Put(R2_CHAIN + '/all.bin', this.localHeaders.slice(0, (this.localHeight + 1) * HEADER_SIZE))
     console.log('  Done')
   }
 
@@ -485,6 +492,7 @@ class R2Daemon {
     console.log('═══════════════════════════════')
 
     console.log(`\nBucket: ${R2_BUCKET}`)
+    console.log(`Chain: ${R2_CHAIN}`)
     console.log(`Mode: ${USE_S3_API ? 'S3 API (fast)' : 'wrangler CLI (run wrangler login first)'}`)
 
     // Check R2 state

@@ -9,7 +9,8 @@ export default {
   },
 
   render(subject, store, container) {
-    const R2_BASE = 'https://pub-a5a92731dd0d452b9670be07e5354fd6.r2.dev'
+    const chain = new URLSearchParams(window.location.search).get('chain') || 'btc'
+    const R2_BASE = 'https://pub-a5a92731dd0d452b9670be07e5354fd6.r2.dev/' + chain
     const HEADER_SIZE = 80
     const EPOCH_SIZE = 2016
 

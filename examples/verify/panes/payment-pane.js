@@ -199,7 +199,8 @@ export default {
         statusEl.textContent = 'Fetching verified header for block ' + proof.block_height + '...'
 
         // Fetch the verified header from R2
-        const r2Base = 'https://pub-a5a92731dd0d452b9670be07e5354fd6.r2.dev'
+        const chain = new URLSearchParams(window.location.search).get('chain') || 'btc'
+        const r2Base = 'https://pub-a5a92731dd0d452b9670be07e5354fd6.r2.dev/' + chain
         const epoch = Math.floor(proof.block_height / 2016)
         const indexInEpoch = proof.block_height % 2016
 

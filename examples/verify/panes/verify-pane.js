@@ -10,7 +10,8 @@ export default {
 
   render(subject, store, container) {
     const node = store.get(subject.value)
-    const source = store.prop(node, 'target') || 'https://pub-a5a92731dd0d452b9670be07e5354fd6.r2.dev/all.bin'
+    const chain = new URLSearchParams(window.location.search).get('chain') || 'btc'
+    const source = store.prop(node, 'target') || 'https://pub-a5a92731dd0d452b9670be07e5354fd6.r2.dev/' + chain + '/all.bin'
 
     const HEADER_SIZE = 80
     const EPOCH_SIZE = 2016

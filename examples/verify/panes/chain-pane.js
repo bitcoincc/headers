@@ -9,7 +9,9 @@ export default {
   },
 
   render(subject, store, container) {
-    const R2_BASE = 'https://pub-a5a92731dd0d452b9670be07e5354fd6.r2.dev'
+    const R2_ROOT = 'https://pub-a5a92731dd0d452b9670be07e5354fd6.r2.dev'
+    const chain = new URLSearchParams(window.location.search).get('chain') || 'btc'
+    const R2_BASE = R2_ROOT + '/' + chain
     const RELAYS = [
       'wss://relay.damus.io',
       'wss://nos.lol',
@@ -590,13 +592,6 @@ export default {
       phase1.fill.className = 'chain-phase-fill fill-green'
       phase1.fill.style.width = '0%'
 
-      // Quick verification: genesis + chain linkage sampling + tip
-      const genesisHeader = archiveData.subarray(0, HEADER_SIZE)
-      const genesisHash = headerHash(genesisHeader)
-      if (genesisHash !== '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f') {
-        throw new Error('Genesis hash mismatch!')
-      }
-
       // Full H-class verification with live stats
       liveStats.style.display = 'block'
       Object.values(rules).forEach(r => { r.checked = 0; r.passed = 0 })
@@ -608,7 +603,11 @@ export default {
       const startTime = performance.now()
 
       // Genesis check
-      const GENESIS_HASH = '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'
+      const GENESIS_HASHES = {
+        btc: '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f',
+        tbtc4: '00000000da84f2bafbbc53dee25a72ae507ff4914b867c565be350b0da8bf043',
+      }
+      const GENESIS_HASH = GENESIS_HASHES[chain] || GENESIS_HASHES.btc
 
       for (let i = 0; i < totalHeaders; i += BATCH) {
         const end = Math.min(i + BATCH, totalHeaders)
@@ -644,8 +643,8 @@ export default {
             if (verifyPoW(header, hr)) rules.pow.passed++
           }
 
-          // 4. Retarget
-          if (j > 0 && j % EPOCH_SIZE === 0) {
+          // 4. Retarget (mainnet only — testnets allow difficulty reset)
+          if (chain === 'btc' && j > 0 && j % EPOCH_SIZE === 0) {
             rules.retarget.checked++
             if (verifyRetarget(archiveData, j)) rules.retarget.passed++
           }
@@ -658,13 +657,15 @@ export default {
           prevTimestamps.push(timestamp)
           if (prevTimestamps.length > 12) prevTimestamps.shift()
 
-          // 6. Version
-          rules.version.checked++
-          let vOk = true
-          if (j >= BIP65_HEIGHT && version < 4) vOk = false
-          else if (j >= BIP66_HEIGHT && version < 3) vOk = false
-          else if (j >= BIP34_HEIGHT && version < 2) vOk = false
-          if (vOk) rules.version.passed++
+          // 6. Version (mainnet activation heights only)
+          if (chain === 'btc') {
+            rules.version.checked++
+            let vOk = true
+            if (j >= BIP65_HEIGHT && version < 4) vOk = false
+            else if (j >= BIP66_HEIGHT && version < 3) vOk = false
+            else if (j >= BIP34_HEIGHT && version < 2) vOk = false
+            if (vOk) rules.version.passed++
+          }
 
           // Track work and difficulty
           totalWork += workFromBits(bits)
@@ -885,7 +886,12 @@ export default {
         await initHasher()
         await runArchive()
         await runCurrent()
-        runNostr() // async, keeps running
+        if (chain === 'btc') {
+          runNostr() // async, keeps running — mainnet only for now
+        } else {
+          setBadge(phase3, 'N/A', 'badge-pending')
+          phase3.detail.textContent = 'Nostr live stream not available for ' + chain
+        }
 
         btn.textContent = 'Re-verify'
         btn.disabled = false
