@@ -51,7 +51,10 @@ export default {
       .verify-pane { font-family: Georgia, 'Times New Roman', serif; max-width: 720px; margin: 0 auto; padding: 1rem; }
       .verify-title { font-size: 1.5rem; margin-bottom: 0.5rem; }
       .verify-subtitle { color: #666; margin-bottom: 1.5rem; }
-      .verify-source { font-family: monospace; font-size: 0.8rem; color: #888; word-break: break-all; margin-bottom: 1.5rem; }
+      .verify-source { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; align-items: center; }
+      .verify-source input { flex: 1; font-family: monospace; font-size: 0.8rem; color: #555; padding: 0.4rem 0.6rem; border: 1px solid #ddd; border-radius: 4px; background: #fafaf8; }
+      .verify-source input:focus { outline: none; border-color: #f7931a; }
+      .verify-source label { font-size: 0.75rem; color: #888; white-space: nowrap; }
       .verify-btn { background: #f7931a; color: #fff; border: none; padding: 0.6rem 1.5rem; border-radius: 4px; cursor: pointer; font-size: 1rem; font-family: inherit; }
       .verify-btn:hover { background: #e8850f; }
       .verify-btn:disabled { background: #ccc; cursor: not-allowed; }
@@ -110,7 +113,14 @@ export default {
 
     const sourceEl = document.createElement('div')
     sourceEl.className = 'verify-source'
-    sourceEl.textContent = source
+    const sourceLabel = document.createElement('label')
+    sourceLabel.textContent = 'Source:'
+    sourceEl.appendChild(sourceLabel)
+    const sourceInput = document.createElement('input')
+    sourceInput.type = 'text'
+    sourceInput.value = source
+    sourceInput.placeholder = 'URL to all.bin or epoch binary file'
+    sourceEl.appendChild(sourceInput)
     pane.appendChild(sourceEl)
 
     const btn = document.createElement('button')
@@ -507,9 +517,10 @@ export default {
       btn.textContent = 'Downloading...'
       progressLabel.textContent = 'Downloading headers...'
 
-      addLog('Fetching ' + source, 'ok')
+      const url = sourceInput.value.trim()
+      addLog('Fetching ' + url, 'ok')
 
-      const response = await fetch(source)
+      const response = await fetch(url)
       if (!response.ok) throw new Error('Download failed: ' + response.status)
 
       const contentLength = parseInt(response.headers.get('content-length') || '0')
