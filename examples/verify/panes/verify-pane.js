@@ -1,5 +1,5 @@
 export default {
-  label: 'Verify',
+  label: 'Archive',
   icon: '\u2705',
 
   canHandle(subject, store) {
