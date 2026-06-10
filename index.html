@@ -306,7 +306,8 @@
             setRelayStatus(s => ({ ...s, [url]: 'connected' }));
             const sub = JSON.stringify([
               'REQ', 'headers',
-              { kinds: [KIND_BITCOIN_HEADERS], authors: [TRUSTED_PUBKEY], '#d': ['latest'], '#n': ['btc'], limit: 1 }
+              // NIP-333: d = network code; 'latest' is the legacy alias kept during migration
+              { kinds: [KIND_BITCOIN_HEADERS], authors: [TRUSTED_PUBKEY], '#d': ['btc', 'latest'], '#n': ['btc'], limit: 1 }
             ]);
             ws.send(sub);
           };
@@ -433,7 +434,7 @@
         `}
 
         <div class="info">
-          <div><strong>Protocol:</strong> <code>kind: 33333</code> <code>d: latest</code> <code>n: btc</code> (<a href="https://nip-333.github.io/">NIP-333</a>)</div>
+          <div><strong>Protocol:</strong> <code>kind: 33333</code> <code>d: btc</code> <code>n: btc</code> (<a href="https://nip-333.github.io/">NIP-333</a>)</div>
           <div style="margin-top: 0.5rem">
             <strong>Trusted Publisher:</strong> <a href="https://nostrcg.github.io/did-nostr/"><code style="font-size: 0.65rem">did:nostr:${TRUSTED_PUBKEY.slice(0,8)}...</code></a>
           </div>
