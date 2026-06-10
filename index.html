@@ -306,8 +306,7 @@
             setRelayStatus(s => ({ ...s, [url]: 'connected' }));
             const sub = JSON.stringify([
               'REQ', 'headers',
-              // NIP-333: d = network code; 'latest' is the legacy alias kept during migration
-              { kinds: [KIND_BITCOIN_HEADERS], authors: [TRUSTED_PUBKEY], '#d': ['btc', 'latest'], '#n': ['btc'], limit: 1 }
+              { kinds: [KIND_BITCOIN_HEADERS], authors: [TRUSTED_PUBKEY], '#d': ['btc'], limit: 1 }
             ]);
             ws.send(sub);
           };
