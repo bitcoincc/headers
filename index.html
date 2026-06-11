@@ -23,6 +23,12 @@
     }
     .page-title { color: var(--accent); font-size: 1.25rem; margin-bottom: 0.25rem; }
     .page-subtitle { color: var(--text-dim); font-size: 0.85rem; }
+    .net-tabs { display: inline-flex; gap: 0.5rem; margin-top: 0.75rem; }
+    .net-tab {
+      background: var(--bg-code); color: var(--text-dim); border: 1px solid var(--border);
+      border-radius: 1rem; padding: 0.25rem 0.9rem; font-size: 0.75rem; cursor: pointer;
+    }
+    .net-tab.active { color: var(--accent); border-color: var(--accent); }
     .status {
       display: inline-flex;
       align-items: center;
@@ -293,11 +299,16 @@
       const [eventMeta, setEventMeta] = useState(null);
       const [rawEvent, setRawEvent] = useState(null);
       const [showRaw, setShowRaw] = useState(false);
+      const [net, setNet] = useState('btc'); // NIP-333 network code: btc | tbtc4
       const socketsRef = useRef({});
       const currentTipRef = useRef(0);
 
       useEffect(() => {
-        RELAYS.forEach(url => {
+        // fresh slate per network: the streams are independent replaceable events
+        currentTipRef.current = 0;
+        setHeaders([]); setEventMeta(null); setRawEvent(null); setRelayStatus({});
+
+        const connect = (url) => {
           setRelayStatus(s => ({ ...s, [url]: 'connecting' }));
           const ws = new WebSocket(url);
           socketsRef.current[url] = ws;
@@ -306,7 +317,7 @@
             setRelayStatus(s => ({ ...s, [url]: 'connected' }));
             const sub = JSON.stringify([
               'REQ', 'headers',
-              { kinds: [KIND_BITCOIN_HEADERS], authors: [TRUSTED_PUBKEY], '#d': ['btc'], limit: 1 }
+              { kinds: [KIND_BITCOIN_HEADERS], authors: [TRUSTED_PUBKEY], '#d': [net], limit: 1 }
             ]);
             ws.send(sub);
           };
@@ -352,22 +363,26 @@
 
           ws.onclose = () => {
             setRelayStatus(s => ({ ...s, [url]: 'disconnected' }));
+            // reconnect WITH handlers and subscription — a bare socket
+            // would sit connected but silently stale
             setTimeout(() => {
-              if (socketsRef.current[url]) {
-                socketsRef.current[url] = new WebSocket(url);
-              }
+              if (socketsRef.current[url] === ws) connect(url);
             }, 5000);
           };
 
           ws.onerror = () => {
             setRelayStatus(s => ({ ...s, [url]: 'error' }));
           };
-        });
+        };
+
+        RELAYS.forEach(connect);
 
         return () => {
-          Object.values(socketsRef.current).forEach(ws => ws.close());
+          const sockets = socketsRef.current;
+          socketsRef.current = {}; // disarm reconnects before closing
+          Object.values(sockets).forEach(ws => { try { ws.close(); } catch (e) {} });
         };
-      }, []);
+      }, [net]);
 
       const connectedCount = Object.values(relayStatus).filter(s => s === 'connected').length;
       const anyConnected = connectedCount > 0;
@@ -380,6 +395,10 @@
           <div class="status">
             <span class="dot ${anyConnected ? 'connected' : 'connecting'}"></span>
             <span>${connectedCount}/${RELAYS.length} relays</span>
+          </div>
+          <div class="net-tabs">
+            <button class="net-tab ${net === 'btc' ? 'active' : ''}" onClick=${() => setNet('btc')}>mainnet</button>
+            <button class="net-tab ${net === 'tbtc4' ? 'active' : ''}" onClick=${() => setNet('tbtc4')}>testnet4</button>
           </div>
         </div>
 
@@ -397,10 +416,12 @@
           </div>
 
           <div class="energy-bar">
-            <div class="energy-stat">
-              <span>\u26A1</span>
-              <span><strong>~$${(headers.length * 200000).toLocaleString()}</strong> energy</span>
-            </div>
+            ${net === 'btc' ? html`
+              <div class="energy-stat">
+                <span>\u26A1</span>
+                <span><strong>~$${(headers.length * 200000).toLocaleString()}</strong> energy</span>
+              </div>
+            ` : ''}
             <div class="energy-stat">
               <span>\u{1F4E6}</span>
               <span><strong>${headers.length}</strong> blocks</span>
@@ -433,7 +454,7 @@
         `}
 
         <div class="info">
-          <div><strong>Protocol:</strong> <code>kind: 33333</code> <code>d: btc</code> <code>n: btc</code> (<a href="https://nip-333.github.io/">NIP-333</a>)</div>
+          <div><strong>Protocol:</strong> <code>kind: 33333</code> <code>d: ${net}</code> <code>n: ${net}</code> (<a href="https://nip-333.github.io/">NIP-333</a>)</div>
           <div style="margin-top: 0.5rem">
             <strong>Trusted Publisher:</strong> <a href="https://nostrcg.github.io/did-nostr/"><code style="font-size: 0.65rem">did:nostr:${TRUSTED_PUBKEY.slice(0,8)}...</code></a>
           </div>
